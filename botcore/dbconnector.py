@@ -4,7 +4,7 @@ from config import databaseAddress, databaseUser, databaseUserPass, databaseName
 
 class dbconnector:
 
-	#RME: Just makes the database connection
+	#Just makes the database connection
 	def __init__(self):
 		try:
 			self.db = MySQLdb.connect(databaseAddress,
@@ -33,7 +33,7 @@ class dbconnector:
 		self.cursor.close()
 
 	"""
-	TODO: Write method to query data for userName
+	TODO: Write method to query data for general log
 	"""
 
 	"""
@@ -41,13 +41,41 @@ class dbconnector:
 	"""
 
 	"""
-	TODO: Write method to generate generate log for the last x messages
+	R: 
+	M: 
+	E: 
+	Functions properly, consider other methods for logging
 	"""
+	def logHistory(self, userName, length):
+		self.cursor = self.db.cursor()
+		uid = self._getIDFromUsername(userName)
+		try:
+			self.cursor.execute("SELECT COUNT( * ) FROM `log` WHERE `user_id` = %s" % str(uid) )
+			maxVal = self.cursor.fetchone()[0]
+			minVal = maxVal - length
+			if minVal < 0:
+				minVal = 0
+			self.cursor.execute("SELECT * FROM `log` WHERE `user_id` = %s LIMIT %s, %s" % (uid, minVal, maxVal))
+			output = self.cursor.fetchall()
+			print output
+			"""
+			TODO: Eventually it won't return the output but rather log it
+			Possible make another class somewhere and make it create an object of that class
+			to that has logging methods for things like this so it doesn't keep passing input around
+			"""
+			return output
+		except:
+			self.db.rollback()
+		self.cursor.close()
+
 
 	"""
-	TODO: 
+	TODO: Write method to retrieve username from id
 	"""
+	def _getUsernameFromID(self, userID):
+		self.cursor = self.db.cursor()
 
+		self.cursor.close()
 
 	"""
 	R: takes in userName
@@ -75,5 +103,5 @@ class dbconnector:
 			result = self.cursor.fetchone()
 			return result[0]
 		except:
-			print("Error retreiving data")
+			print("error getting id from username")
 		self.cursor.close()

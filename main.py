@@ -1,6 +1,7 @@
 from botcore.dbconnector import dbconnector
 from botcore.twitchconnector import twitchconnector
 from botcore.inputmanager import inputmanager
+from botcore.commandmanager import commandmanager
 import MySQLdb
 
 class main:
@@ -8,6 +9,7 @@ class main:
 		self.db = dbconnector()
 		self.serv = twitchconnector()
 		self.cleaner = inputmanager()
+		self.cmd = commandmanager()
 
 con = main()
 
@@ -15,8 +17,8 @@ while True:
 	"""
 	Takes in data and sends it off to the cleaner
 	"""
-	output = con.serv.getData()
-	output = con.cleaner.clean(output)
+	raw = con.serv.getData()
+	output = con.cleaner.clean(raw)
 
 	"""
 	Manages the ping
@@ -25,13 +27,20 @@ while True:
 		con.serv.ping()
 
 	"""
+	Manages the commands
+	"""
+	if not output == None:
+		con.cmd.manage(output[0], output[3], con.db)
+
+	"""
 	Tests if it's a valid output and not None, if so it logs it
 	"""
 	if not output == None:
 		con.db.insertMessageIntoLog(output[0], output[1], output[2], output[3])
 
 
-	#temporary thing for testing?
-	print output
+	#Just puts out things into console
+	if not output == None:
+		print output
 
 

@@ -30,6 +30,14 @@ class twitchconnector:
 		self.irc.send("PRIVMSG " + twitchChannel + " :" + message + "\r\n")
 
 	"""
+	R: raw data to send via irc
+	M: n/a
+	E: sends message to the twitch irc interface, but as any type not just PRIVMSG
+	"""
+	def msgRaw(self, message):
+		self.irc.send(message)
+
+	"""
 	R: n/a
 	M: n/a
 	E: returns the message from the irc server
