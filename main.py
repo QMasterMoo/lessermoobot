@@ -18,19 +18,7 @@ while True:
 	Takes in data and sends it off to the cleaner
 	"""
 	raw = con.serv.getData()
-	output = con.cleaner.clean(raw)
-
-	"""
-	Manages the ping
-	"""
-	if con.cleaner.isPing():
-		con.serv.ping()
-
-	"""
-	Manages the commands
-	"""
-	if not output == None:
-		con.cmd.manage(output[0], output[3], con.db)
+	output = con.cleaner.clean(raw, con.cmd, con.db, con.serv)
 
 	"""
 	Tests if it's a valid output and not None, if so it logs it
