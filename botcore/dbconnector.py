@@ -15,7 +15,6 @@ class dbconnector:
 			print "Error connecting to database, recheck your config"
 
 	"""
-	Requires username, date, message type, and message data
 	It inserts everything into the log
 	"""
 	def insertMessageIntoLog(self, userName, date, msgType, data):
@@ -28,11 +27,11 @@ class dbconnector:
 			self.db.commit()
 		except:
 			self.db.rollback()
-			print('failed')
+			print 'failed'
 		self.cursor.close()
 
 	"""
-	TODO: Write method to query data for general log
+	queries data for general log
 	"""
 	def queryLog(self, length):
 		self.cursor = self.db.cursor()
@@ -70,7 +69,7 @@ class dbconnector:
 		self.cursor.close()
 
 	"""
-	Functions properly, consider other methods for logging
+	queries data for general log
 	"""
 	def queryHistory(self, userName, length):
 		self.cursor = self.db.cursor()
@@ -90,7 +89,7 @@ class dbconnector:
 
 
 	"""
-	TODO: Write method to retrieve username from id
+	retrieves username from id
 	"""
 	def getUsernameFromID(self, userID):
 		self.cursor = self.db.cursor()
@@ -99,7 +98,7 @@ class dbconnector:
 			result = self.cursor.fetchone()
 			return result[1]
 		except:
-			print("error getting id from username")
+			print "error getting id from username"
 		self.cursor.close()
 
 
@@ -113,7 +112,18 @@ class dbconnector:
 			result = self.cursor.fetchone()
 			return result[0]
 		except:
-			print("error getting id from username")
+			print "error getting id from username"
+		self.cursor.close()
+
+	"""
+	executes external input
+	"""
+	def cursorExecute(self, command):
+		self.cursor = self.db.cursor()
+		try:
+			self.cursor.execute(command)
+		except:
+			self.db.rollback()
 		self.cursor.close()
 
 	"""

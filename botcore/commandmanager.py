@@ -15,13 +15,13 @@ class commandmanager:
 	Invokes the various hardcoded managers
 	Support for other commands will come in the future
 	"""
-	def manage(self, userName, data, db):
+	def manage(self, userName, data, db, serv):
 		self.db = db
 		self.dataIn = data
 		#Not sure how to make this done without intermediary variables
 		hManage = self._historyManager()
 		lManage = self._logManager()
-		#write the methods for welcoming subs
+		sManage = self._subManager(userName, serv)
 		if not hManage == None:
 			return hManage
 		elif not lManage == None:
@@ -70,12 +70,17 @@ class commandmanager:
 
 	"""
 	TODO: Write !quote methods
-		adds quote and such to a seperate table
+		adds quote and such to a seperate table on mysql, not planned for 
+		initial release, see #12
 	"""
 
 	"""
-	TODO: Write method that respond to the subs
+	TODO: implement
+	This method takes in the serv object (connection to twitch server)
+	which is used to send message to the twitch server thanking people for subbing
 	"""
+	def _subManager(self, userName, serv):
+		return
 
 	"""
 	Queries database for last 200 messages for the user
