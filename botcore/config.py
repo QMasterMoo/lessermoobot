@@ -13,3 +13,6 @@ twitchBotPassword = 'use twitch kraken open authentication'
 logSite = ''
 subMessage = ""
 resubMessage = "" #use %s for months TODO: will use try: if %s isn't there
+
+#things that'd break the bot if you changed them
+currentInternalVersion = '1' #different from release numbers, this is used when I change mysql or core functionality and require a system update

@@ -2,6 +2,7 @@ from botcore.dbconnector import dbconnector
 from botcore.twitchconnector import twitchconnector
 from botcore.inputmanager import inputmanager
 from botcore.commandmanager import commandmanager
+from botcore.startupmanager import startupmanager
 import MySQLdb
 
 class main:
@@ -10,8 +11,11 @@ class main:
 		self.serv = twitchconnector()
 		self.cleaner = inputmanager()
 		self.cmd = commandmanager()
+		self.startup = startupmanager()
 
 con = main()
+con.startup.checkUpdate(con.db)
+print "Lesser moobot has started \n"
 
 while True:
 	"""
