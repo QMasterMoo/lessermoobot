@@ -16,7 +16,7 @@ class writer:
 				txt.write(lineOut)
 			txt.close()
 		except:
-			print("error logging history")
+			print "error logging history"
 
 	"""
 	Writes user's !history to file
@@ -29,4 +29,4 @@ class writer:
 				txt.write(lineOut)
 			txt.close()
 		except:
-			print("error logging history")
+			print "error logging history"
