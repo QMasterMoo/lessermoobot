@@ -1,16 +1,18 @@
 import datetime #will be used for command cooldowns
+import json
+import urllib2
 from writer import writer
-from config import logSite, subMessage, resubMessage
+from config import logSite, subMessage, resubMessage, twitchChannel
 
 class commandmanager:
 
 	def __init__(self):
-		#Eventually will have more commands
+		#Eventually will init commands from file x
 		self.logger = writer()
-		self.asdfjkl = "I will eventually init text based commands here"
+		self.currentMinute = 0
+		self.lastMinute = -1
+		self.modList = ['moomasterq']#as long as this isn't empty the bot will work
 
-	#username in here is for seeing if the user is mod or not
-	#idk where to put check for mod or if I'm doing it through urllib and json or mysql
 	"""
 	Invokes the various hardcoded managers
 	Support for other commands will come in the future
@@ -18,17 +20,36 @@ class commandmanager:
 	def manage(self, userName, data, db, serv):
 		self.db = db
 		self.dataIn = data
-		#Not sure how to make this done without intermediary variables
-		hManage = self._historyManager()
-		lManage = self._logManager()
-		sManage = self._subManager(userName, serv)
-		if not hManage == None:
-			return hManage
-		elif not lManage == None:
-			return lManage
+		self.currentMinute = datetime.datetime.now().minute
+		self._subManager(userName, serv)#passing serv allows sending multiple messages
+		#Not sure how to do without variables since I don't want to call it twice
+		if userName in self.getModList():
+			hManage = self._historyManager()
+			lManage = self._logManager()
+			if not hManage == None:
+				return hManage
+			elif not lManage == None:
+				return lManage
+			else:
+				return None
 		else:
 			return None
 
+	"""
+	Returns the mod list in a list
+	See issue #15
+	"""
+	def getModList(self):
+		if self.currentMinute != self.lastMinute: #Anti flood measure for tmi
+			self.lastMinute = self.currentMinute
+			self.modList = ['moomasterq']#resets mod list
+			modJSON= urllib2.urlopen("https://tmi.twitch.tv/group/user/%s/chatters" % twitchChannel[1:])
+			modJSON = json.loads(modJSON.read().decode("utf-8"))
+			for userLevel in ['staff','admins','global_mods','moderators']:
+				if modJSON["chatters"][userLevel]:
+					for user in modJSON["chatters"][userLevel]:
+						self.modList.append(user)
+		return self.modList
 
 	"""
 	Manages the finding and executing of the !history userName command
@@ -75,12 +96,19 @@ class commandmanager:
 	"""
 
 	"""
-	TODO: implement
 	This method takes in the serv object (connection to twitch server)
 	which is used to send message to the twitch server thanking people for subbing
 	"""
 	def _subManager(self, userName, serv):
-		return
+		if userName == "twitchnotify":
+			dataSplit = self.dataIn.split(' ')
+			subName = dataSplit[0]
+			subType = dataSplit[1]
+			if subType == 'subscribed':
+				subMonth = dataSplit[3]
+				serv.msg(resubMessage % (subName, subMonth))
+			else:
+				serv.msg(subMessage % subName)
 
 	"""
 	Queries database for last 200 messages for the user
