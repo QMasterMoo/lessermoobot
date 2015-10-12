@@ -1,6 +1,7 @@
 import MySQLdb
 import datetime
 from config import databaseAddress, databaseUser, databaseUserPass, databaseName
+import sys
 
 class dbconnector:
 
@@ -12,7 +13,7 @@ class dbconnector:
 										databaseUserPass, 
 										databaseName)
 		except:
-			print "Error connecting to database, recheck your config"
+			self._logError("CRITICAL ERROR: CONNECTING TO DATABASE")
 
 	"""
 	It inserts everything into the log
@@ -27,7 +28,8 @@ class dbconnector:
 			self.db.commit()
 		except:
 			self.db.rollback()
-			print 'failed'
+			self._logError("CRITICAL ERROR: INSERTING MESSAGE INTO LOG")
+			sys.exit(0)
 		self.cursor.close()
 
 	"""
@@ -45,7 +47,7 @@ class dbconnector:
 			output = self.cursor.fetchall()
 			return output
 		except:
-			self.db.rollback()
+			self._logError("ERROR: querying in general")
 		self.cursor.close()
 
 	"""
@@ -65,7 +67,7 @@ class dbconnector:
 			print output
 			return output
 		except:
-			self.db.rollback()
+		    self._logError("ERROR: quering type")
 		self.cursor.close()
 
 	"""
@@ -84,9 +86,8 @@ class dbconnector:
 			output = self.cursor.fetchall()
 			return output
 		except:
-			self.db.rollback()
+			self._logError("ERROR: querying history")
 		self.cursor.close()
-
 
 	"""
 	retrieves username from id
@@ -98,9 +99,8 @@ class dbconnector:
 			result = self.cursor.fetchone()
 			return result[1]
 		except:
-			print "error getting id from username"
+			self._logError("ERROR: retrieving userName from id")
 		self.cursor.close()
-
 
 	"""
 	takes in the username and returns the user's id
@@ -112,7 +112,7 @@ class dbconnector:
 			result = self.cursor.fetchone()
 			return result[0]
 		except:
-			print "error getting id from username"
+			self._logError("ERROR: retrieving id from userName")
 		self.cursor.close()
 
 	"""
@@ -124,6 +124,7 @@ class dbconnector:
 			self.cursor.execute(command)
 		except:
 			self.db.rollback()
+			self._logError("ERROR: executing custom command")
 		self.cursor.close()
 
 	"""
@@ -135,5 +136,17 @@ class dbconnector:
 			self.cursor.execute("INSERT INTO users VALUES ( NULL , \'%s\')" % userName)
 			self.db.commit()
 		except:
-			self.db.rollback()
+			self.db.rollback() #unable to ERROR LOG since it'll be an error most times
 		self.cursor.close()
+
+	"""
+	used for exiting the program and logging things
+	"""
+	def _logError(self, msg):
+		date = datetime.datetime.now()
+		try:
+			txt = open("errorlogs/" + str(date)[:19] + ".txt" ,"w")
+			txt.write(msg + '\n')
+			txt.close()
+		except:
+			print "CRITICAL ERROR: LOGGING HISTORY"
