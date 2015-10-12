@@ -28,8 +28,8 @@ class dbconnector:
 			self.db.commit()
 		except:
 			self.db.rollback()
-			self._logError("CRITICAL ERROR: INSERTING MESSAGE INTO LOG")
-			sys.exit(0)
+			#Currently an error with a certain message type
+			#self._logError("CRITICAL ERROR: INSERTING MESSAGE INTO LOG")
 		self.cursor.close()
 
 	"""
