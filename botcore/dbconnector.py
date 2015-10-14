@@ -14,6 +14,7 @@ class dbconnector:
 										databaseName)
 		except:
 			self._logError("CRITICAL ERROR: CONNECTING TO DATABASE")
+			sys.exit(0)
 
 	"""
 	It inserts everything into the log
