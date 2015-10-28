@@ -22,9 +22,7 @@ class inputmanager:
 				return None
 			elif self.mode == "PRIVMSG":
 				output = [self._findUserNamePRIVMSG(), self._getTime(), self.mode, self._cleanPRIVMSG()]
-				manageOut = cmd.manage(output[0], output[3], db, serv) #Not sure how to make this done without intermediary variables
-				if not manageOut == None:
-					serv.msg(manageOut)
+				cmd.manage(output[0], output[3], db, serv) #Not sure how to make this done without intermediary variables
 				return output
 			elif self.mode == 'CLEARCHAT':
 				output = [self._findUserNameCLEARCHAT(), self._getTime(), self.mode, 

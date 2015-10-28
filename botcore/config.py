@@ -14,6 +14,3 @@ logSite = 'log.website.com'
 subMessage = "Thanks for subscribing %s"#The %s will become their name
 resubMessage = "Thank you for subscribing %s for %s months!" #Make sure to include 2 %s. First is userName, second is Months
 screenName = 'lmb'
-
-#things that'd break the bot if you changed them
-currentInternalVersion = '1' #different from release numbers, this is used when I change mysql or core functionality and require a system update

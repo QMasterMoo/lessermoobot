@@ -1,4 +1,3 @@
-from config import currentInternalVersion
 import os
 
 class startupmanager:
@@ -9,6 +8,7 @@ class startupmanager:
 	when updating structures in mysql or anything else
 	"""
 	def __init__(self):
+		self.currentInternalVersion = '1'
 		try:
 			lock = open('botcore/version', 'r+')
 			self.version = int(lock.readline())
@@ -17,7 +17,7 @@ class startupmanager:
 			self.version = 0
 		#Since there isn't a way to delete a single line I rewrite over it
 		lock = open('botcore/version', 'w')
-		lock.write(currentInternalVersion)
+		lock.write(self.currentInternalVersion)
 		lock.close()
 
 	def outVersion(self):
@@ -70,3 +70,5 @@ class startupmanager:
 			os.makedirs('logs/history')
 		if not os.path.isdir('errorlogs'):
 			os.makedirs('errorlogs')
+		if not os.path.isdir('customfiles'):
+			os.makedirs('customfiles')
