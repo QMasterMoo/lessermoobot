@@ -8,7 +8,7 @@ class startupmanager:
 	when updating structures in mysql or anything else
 	"""
 	def __init__(self):
-		self.currentInternalVersion = '1'
+		self.currentInternalVersion = '2'
 		try:
 			lock = open('botcore/version', 'r+')
 			self.version = int(lock.readline())
@@ -34,6 +34,10 @@ class startupmanager:
 			self._initTables()
 			print "First time setup complete!"
 			print "If lmb was already setup and you see this something went wrong!"
+		if self.version <= 1:
+			self._initQuoteTable()
+			self._makeNextGameFile()
+			print "Lessermoobot has updated (1)!"
 		"""
 		How to add future update versions etc...
 		if self.version <= 1:
@@ -72,3 +76,19 @@ class startupmanager:
 			os.makedirs('errorlogs')
 		if not os.path.isdir('customfiles'):
 			os.makedirs('customfiles')
+
+	"""
+	creates the tables needed for !quote
+	"""
+	def _initQuoteTable(self):
+		self.db.cursorExecute("CREATE TABLE quote (\
+			id INT UNSIGNED NOT NULL AUTO_INCREMENT, \
+			user_id INT UNSIGNED NOT NULL, \
+			date DATETIME NOT NULL, \
+			data VARCHAR(2000) NOT NULL, \
+			PRIMARY KEY (id) \
+			);")
+
+	def _makeNextGameFile(self):
+		txt = open('customfiles/nextgame', 'w')
+		txt.close()
