@@ -11,6 +11,7 @@ class commandmanager:
         self.logger = writer()
         self.currentMinute = 0
         self.lastMinute = -1
+        self.quoteTime = datetime.datetime.now()
         self.modList = ['moomasterq']#as long as this isn't empty the bot will work
 
     """
@@ -21,9 +22,13 @@ class commandmanager:
         self.db = db
         self.data = data.split(' ')
         self.serv = serv
+        #time things
         self.currentMinute = datetime.datetime.now().minute
-        self._subManager(userName)#passing serv allows sending multiple messages
-        #Not sure how to do without variables since I don't want to call it twice
+        self.currentTime = datetime.datetime.now()
+        #managers
+        self._subManager(userName)
+        self._quoteManager(userName)
+        #mod managers
         if userName in self.getModList():
             self._historyManager()
             self._logManager()
@@ -72,10 +77,37 @@ class commandmanager:
                 self.serv.msg("%s/log.txt" % logSite)
 
     """
-    TODO: Write !quote methods
-        adds quote and such to a seperate table on mysql, not planned for 
-        initial release, see #12
+    does everything with quotes
+
+    will add remove functions later
     """
+    def _quoteManager(self, userName):
+        #Makes sure the command wasn't used too recently
+        isCooldown = str(self.currentTime - self.quoteTime) > '0:00:20.000000'
+        if isCooldown:
+            self.quoteTime = datetime.datetime.now()
+        if self.data[0] == '!quote' and (userName in self.getModList() or isCooldown):
+            #abusing try/except again
+            try:
+                if self.data[1].lower() == 'add' and userName in self.getModList():
+                    out = ""
+                    for line in self.data[2:]:
+                        out += line
+                    if out == "":
+                        self.serv.msg("Actually write something!")
+                    else:
+                        qid = self.db.insertQuote(userName, str(out))
+                        self.serv.msg("Quote Added! (#%s)" % str(qid))
+                elif self.data[1].lower() == 'get' or self.data[1].lower() == 'getquote' or self.data[1].lower() == 'id':
+                    quote = self.db.queryQuote(int(self.data[2]))
+                    self.serv.msg(quote)
+
+            #If it's not an extra command it just goes and queries
+            except:
+                quote = self.db.queryQuote(0)
+                self.serv.msg(quote)
+
+
 
     """
     This method takes in the serv object (connection to twitch server)
@@ -145,5 +177,4 @@ class commandmanager:
     """
     def _log(self, length):
         return self.db.queryLog(length)
-
 
