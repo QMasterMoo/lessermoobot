@@ -143,6 +143,10 @@ class dbconnector:
 			self.cursor.execute("INSERT INTO quote VALUES (NULL, %s, \'%s\', \'%s\')" 
 				% (str(uid), date, quote) )
 			self.db.commit()
+			self.cursor.execute("SELECT COUNT( * ) FROM quote")
+			qid = self.cursor.fetchone()[0]
+			self.cursor.close()
+			return qid
 		except:
 			self.db.rollback()
 			self._logError("ERROR: inserting quote")
