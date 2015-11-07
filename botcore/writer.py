@@ -36,12 +36,12 @@ class writer:
 	Only writes to one single line
 	"""
 	def writeCustomFile(self, fileName, data):
-	#	try:
-		txt = open("customfiles/" + fileName, 'w')
-		txt.write(str(data))
-		txt.close()
-	#	except:
-	#		print "error creating custom file"
+		try:
+			txt = open("customfiles/" + fileName, 'w+')
+			txt.write(str(data))
+			txt.close()
+		except:
+			print "error creating custom file"
 
 	"""
 	Reads (as a string) a single line of data from a custom file
@@ -49,7 +49,7 @@ class writer:
 	"""
 	def readCustomFile(self, fileName):
 		try: 
-			txt = open("customfiles/" + fileName, 'r')
+			txt = open("customfiles/" + fileName, 'r+')
 			out = txt.readline()
 			txt.close()
 			return out
