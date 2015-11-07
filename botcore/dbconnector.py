@@ -2,6 +2,7 @@ import MySQLdb
 import datetime
 from config import databaseAddress, databaseUser, databaseUserPass, databaseName
 import sys
+import random
 
 class dbconnector:
 
@@ -46,6 +47,7 @@ class dbconnector:
 				minVal = 0
 			self.cursor.execute("SELECT * FROM  log LIMIT %s , %s" % (minVal, maxVal))
 			output = self.cursor.fetchall()
+			self.cursor.close()
 			return output
 		except:
 			self._logError("ERROR: querying in general")
@@ -66,6 +68,7 @@ class dbconnector:
 			self.cursor.execute("SELECT * FROM  log WHERE type = \'%s\' LIMIT %s , %s" % (mode, minVal, maxVal))
 			output = self.cursor.fetchall()
 			print output
+			self.cursor.close()
 			return output
 		except:
 		    self._logError("ERROR: quering type")
@@ -85,6 +88,7 @@ class dbconnector:
 				minVal = 0
 			self.cursor.execute("SELECT * FROM log WHERE user_id = %s LIMIT %s, %s" % (uid, minVal, maxVal))
 			output = self.cursor.fetchall()
+			self.cursor.close()
 			return output
 		except:
 			self._logError("ERROR: querying history")
@@ -127,6 +131,49 @@ class dbconnector:
 			self.db.rollback()
 			self._logError("ERROR: executing custom command")
 		self.cursor.close()
+
+	"""
+	inserts quote data into quote table
+	"""
+	def insertQuote(self, userName, quote):
+		self.cursor = self.db.cursor()
+		date = str(datetime.datetime.now())[:19]
+		uid = self.getIDFromUsername(userName)
+		try:
+			self.cursor.execute("INSERT INTO quote VALUES (NULL, %s, \'%s\', \'%s\')" 
+				% (str(uid), date, quote) )
+			self.db.commit()
+		except:
+			self.db.rollback()
+			self._logError("ERROR: inserting quote")
+		self.cursor.close()
+
+
+	"""
+	queries quotes
+	"""
+	def queryQuote(self, qid):
+		self.cursor = self.db.cursor()
+		if qid == 0:
+			self.cursor.execute("SELECT COUNT( * ) FROM quote")
+			maxVal = self.cursor.fetchone()[0]
+			quoteId = random.randint(1, maxVal)
+			self.cursor.execute("SELECT * FROM quote where id=\'%s\'" % quoteId)
+			quote = self.cursor.fetchone()
+			self.cursor.close()
+			date = "%s" % str(quote[2])[:10]
+			quote = "\"%s\" - %s (#%s)" % (quote[3], date, str(quote[0]))
+			return quote
+		else:
+			self.cursor.execute("SELECT * FROM quote where id=\'%s\'" % qid)
+			quote = self.cursor.fetchone()
+			self.cursor.close()
+			date = "%s" % str(quote[2])[:10]
+			quote = "\"%s\" - %s (#%s)" % (quote[3], date, str(quote[0]))
+			return quote
+		self.cursor.close()
+
+
 
 	"""
 	inserts the username into the 'users' table
