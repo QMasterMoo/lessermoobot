@@ -179,6 +179,7 @@ class dbconnector:
 		except:
 			pass
 		self.cursor.close()
+		return "error retreiving quote"
 
 	"""
 	Deletes the quote based on id
