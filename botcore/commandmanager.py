@@ -92,7 +92,7 @@ class commandmanager:
                 if self.data[1].lower() == 'add' and userName in self.getModList():
                     out = ""
                     for line in self.data[2:]:
-                        out += line
+                        out += line + ' '
                     if out == "":
                         self.serv.msg("Actually write something!")
                     else:
