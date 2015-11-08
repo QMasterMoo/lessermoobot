@@ -101,7 +101,13 @@ class commandmanager:
                 elif self.data[1].lower() == 'get' or self.data[1].lower() == 'getquote' or self.data[1].lower() == 'id':
                     quote = self.db.queryQuote(int(self.data[2]))
                     self.serv.msg(quote)
-
+                elif self.data[1] == 'delete' and userName in self.getModList():
+                    if self.data[2] == 'yes_im_sure':
+                        qid = int(self.data[3])
+                        self.db.deleteQuote(qid)
+                        self.serv.msg("Quote #%s deleted :'(" % str(qid))
+                    else:
+                        self.serv.msg("please specify if you are sure you want to delete it")
             #If it's not an extra command it just goes and queries
             except:
                 quote = self.db.queryQuote(0)
