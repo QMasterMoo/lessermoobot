@@ -143,8 +143,8 @@ class dbconnector:
 			self.cursor.execute("INSERT INTO quote VALUES (NULL, %s, \'%s\', \'%s\')" 
 				% (str(uid), date, quote) )
 			self.db.commit()
-			self.cursor.execute("SELECT COUNT( * ) FROM quote")
-			qid = self.cursor.fetchone()[0]
+			self.cursor.execute("SELECT id FROM quote WHERE data=\'%s\'" % quote)
+			qid = self.cursor.fetchall()[-1][0]
 			self.cursor.close()
 			return qid
 		except:
@@ -158,26 +158,40 @@ class dbconnector:
 	"""
 	def queryQuote(self, qid):
 		self.cursor = self.db.cursor()
-		if qid == 0:
-			self.cursor.execute("SELECT COUNT( * ) FROM quote")
-			maxVal = self.cursor.fetchone()[0]
-			quoteId = random.randint(1, maxVal)
-			self.cursor.execute("SELECT * FROM quote where id=\'%s\'" % quoteId)
-			quote = self.cursor.fetchone()
-			self.cursor.close()
-			date = "%s" % str(quote[2])[:10]
-			quote = "\"%s\" - %s (#%s)" % (quote[3], date, str(quote[0]))
-			return quote
-		else:
-			self.cursor.execute("SELECT * FROM quote where id=\'%s\'" % qid)
-			quote = self.cursor.fetchone()
-			self.cursor.close()
-			date = "%s" % str(quote[2])[:10]
-			quote = "\"%s\" - %s (#%s)" % (quote[3], date, str(quote[0]))
-			return quote
+		try:
+			if qid == 0:
+				self.cursor.execute("SELECT COUNT( * ) FROM quote")
+				maxVal = self.cursor.fetchone()[0]
+				quoteId = random.randint(1, maxVal)
+				self.cursor.execute("SELECT * FROM quote where id=\'%s\'" % quoteId)
+				quote = self.cursor.fetchone()
+				self.cursor.close()
+				date = "%s" % str(quote[2])[:10]
+				quote = "\"%s\" - %s (#%s)" % (quote[3], date, str(quote[0]))
+				return quote
+			else:
+				self.cursor.execute("SELECT * FROM quote where id=\'%s\'" % qid)
+				quote = self.cursor.fetchone()
+				self.cursor.close()
+				date = "%s" % str(quote[2])[:10]
+				quote = "\"%s\" - %s (#%s)" % (quote[3], date, str(quote[0]))
+				return quote
+		except:
+			pass
 		self.cursor.close()
 
-
+	"""
+	Deletes the quote based on id
+	"""
+	def deleteQuote(self, qid):
+		self.cursor = self.db.cursor()
+		try:
+			self.cursor.execute("DELETE FROM quote WHERE id=%s" % qid)
+			self.db.commit()
+			self.cursor.close()
+		except:
+			self.cursor.rollback()
+		self.cursor.close()
 
 	"""
 	inserts the username into the 'users' table
