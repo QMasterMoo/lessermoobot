@@ -86,7 +86,7 @@ class commandmanager:
         offCooldown = self.currentTime - datetime.timedelta(seconds=20) > self.quoteTime
         if offCooldown:
             self.quoteTime = self.currentTime
-        if self.data[0] == '!quote' and (userName in self.getModList() or not offCooldown):
+        if self.data[0] == '!quote' and (userName in self.getModList() or offCooldown):
             #abusing try/except again
             try:
                 if self.data[1].lower() == 'add' and userName in self.getModList():
