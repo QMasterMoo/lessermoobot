@@ -11,7 +11,7 @@ class commandmanager:
         self.logger = writer()
         self.currentMinute = 0
         self.lastMinute = -1
-        self.quoteTime = datetime.datetime.now()
+        self.quoteTime = datetime.datetime.now() - datetime.timedelta(seconds=10)
         self.modList = ['moomasterq']#as long as this isn't empty the bot will work
 
     """
@@ -83,10 +83,10 @@ class commandmanager:
     """
     def _quoteManager(self, userName):
         #Makes sure the command wasn't used too recently
-        isCooldown = str(self.currentTime - self.quoteTime) > '0:00:20.000000'
-        if isCooldown:
-            self.quoteTime = datetime.datetime.now()
-        if self.data[0] == '!quote' and (userName in self.getModList() or isCooldown):
+        offCooldown = self.currentTime - datetime.timedelta(seconds=20) > self.quoteTime
+        if offCooldown:
+            self.quoteTime = self.currentTime
+        if self.data[0] == '!quote' and (userName in self.getModList() or not offCooldown):
             #abusing try/except again
             try:
                 if self.data[1].lower() == 'add' and userName in self.getModList():
@@ -96,6 +96,8 @@ class commandmanager:
                     if out == "":
                         self.serv.msg("Actually write something!")
                     else:
+                        #remove trailing whitespace
+                        out.rstrip()
                         qid = self.db.insertQuote(userName, str(out))
                         self.serv.msg("Quote Added! (#%s)" % str(qid))
                 elif self.data[1].lower() == 'get' or self.data[1].lower() == 'getquote' or self.data[1].lower() == 'id':
