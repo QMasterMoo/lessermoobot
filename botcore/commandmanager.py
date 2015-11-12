@@ -78,8 +78,6 @@ class commandmanager:
 
     """
     does everything with quotes
-
-    will add remove functions later
     """
     def _quoteManager(self, userName):
         #Makes sure the command wasn't used too recently
