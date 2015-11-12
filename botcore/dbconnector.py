@@ -160,10 +160,9 @@ class dbconnector:
 		self.cursor = self.db.cursor()
 		try:
 			if qid == 0:
-				self.cursor.execute("SELECT COUNT( * ) FROM quote")
-				maxVal = self.cursor.fetchone()[0]
-				quoteId = random.randint(1, maxVal)
-				self.cursor.execute("SELECT * FROM quote where id=\'%s\'" % quoteId)
+				self.cursor.execute("SELECT * FROM quote AS r1 JOIN ( \
+					SELECT CEIL( RAND( ) * ( SELECT MAX( id ) FROM quote )) AS id) AS r2 \
+					WHERE r1.id >= r2.id ORDER BY r1.id ASC LIMIT 1")
 				quote = self.cursor.fetchone()
 				self.cursor.close()
 				date = "%s" % str(quote[2])[:10]
