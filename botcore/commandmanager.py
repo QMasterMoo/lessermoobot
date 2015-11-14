@@ -81,10 +81,11 @@ class commandmanager:
     """
     def _quoteManager(self, userName):
         #Makes sure the command wasn't used too recently
-        offCooldown = self.currentTime - datetime.timedelta(seconds=20) > self.quoteTime
-        if offCooldown:
-            self.quoteTime = self.currentTime
-        if self.data[0] == '!quote' and (userName in self.getModList() or offCooldown):
+        if self.data[0] == '!quote':
+            offCooldown = self.currentTime - datetime.timedelta(seconds=20) > self.quoteTime
+            if offCooldown:
+                self.quoteTime = self.currentTime
+        if self.data[0] == '!quote' and (offCooldown or userName in self.getModList()):
             #abusing try/except again
             try:
                 if self.data[1].lower() == 'add' and userName in self.getModList():
@@ -95,7 +96,7 @@ class commandmanager:
                         self.serv.msg("Actually write something!")
                     else:
                         #remove trailing whitespace
-                        out.rstrip()
+                        out = out[:-1]
                         qid = self.db.insertQuote(userName, str(out))
                         self.serv.msg("Quote Added! (#%s)" % str(qid))
                 elif self.data[1].lower() == 'get' or self.data[1].lower() == 'getquote' or self.data[1].lower() == 'id':
