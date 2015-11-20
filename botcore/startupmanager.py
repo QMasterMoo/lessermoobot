@@ -2,12 +2,13 @@ import os
 
 class startupmanager:
 
-	"""
-	Creates and modifies a file named 'version'
-	which contains the internal version number which will help
-	when updating structures in mysql or anything else
-	"""
+
 	def __init__(self):
+		"""
+		Creates and modifies a file named 'version'
+		which contains the internal version number which will help
+		when updating structures in mysql or anything else
+		"""
 		self.currentInternalVersion = '2'
 		try:
 			lock = open('botcore/version', 'r+')
@@ -21,13 +22,17 @@ class startupmanager:
 		lock.close()
 
 	def outVersion(self):
+		"""
+		Test functions
+		"""
 		print self.version
 
-	"""
-	checks the version for updates
-	does the functions required for an update if needed
-	"""
+
 	def checkUpdate(self, db):
+		"""
+		checks the version for updates
+		does the functions required for an update if needed
+		"""
 		self.db = db
 		self._makeFolders()
 		if self.version <= 0:
@@ -44,10 +49,11 @@ class startupmanager:
 			print "next version thing etc..."
 		"""
 
-	"""
-	creates the tables needed in the database
-	"""
+
 	def _initTables(self):
+		"""
+		creates the tables needed in the database
+		"""
 		#Creates the log table
 		self.db.cursorExecute("CREATE TABLE log (\
 			id INT UNSIGNED NOT NULL AUTO_INCREMENT, \
@@ -64,10 +70,11 @@ class startupmanager:
 			PRIMARY KEY (user_id)\
 			);")
 
-	"""
-	creates the neccessary subfolders for the history and logs
-	"""
+
 	def _makeFolders(self):
+		"""
+		creates the neccessary subfolders for the history and logs
+		"""
 		if not os.path.isdir('logs'):
 			os.makedirs('logs')
 		if not os.path.isdir('logs/history'):
@@ -77,10 +84,11 @@ class startupmanager:
 		if not os.path.isdir('customfiles'):
 			os.makedirs('customfiles')
 
-	"""
-	creates the tables needed for !quote
-	"""
+
 	def _initQuoteTable(self):
+		"""
+		creates the tables needed for !quote
+		"""
 		self.db.cursorExecute("CREATE TABLE quote (\
 			id INT UNSIGNED NOT NULL AUTO_INCREMENT, \
 			user_id INT UNSIGNED NOT NULL, \
@@ -90,5 +98,8 @@ class startupmanager:
 			);")
 
 	def _makeNextGameFile(self):
+		"""
+		makes the file
+		"""
 		txt = open('customfiles/nextgame', 'w')
 		txt.close()

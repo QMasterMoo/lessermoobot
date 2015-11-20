@@ -8,12 +8,13 @@ class inputmanager:
 	def __init__(self):
 		self.mode = ""
 
-	"""
-	Takes in the raw data and sends it off to the various sub methods to
-	   be cleaned from extra things and replies with the userName, time,
-	   mode or type that the message was sent through, and the chat.
-	"""
+
 	def clean(self, data, cmd, db, serv):
+		"""
+		Takes in the raw data and sends it off to the various sub methods to
+		   be cleaned from extra things and replies with the userName, time,
+		   mode or type that the message was sent through, and the chat.
+		"""
 		self.data = data
 		if not self.isPing() and not self._isMode():
 			self.mode = self._getMode()
@@ -33,33 +34,37 @@ class inputmanager:
 		elif self.isPing():
 			serv.ping()
 
-	"""
-	determines if the message is a ping
-	"""
+
 	def isPing(self):
+		"""
+		determines if the message is a ping
+		"""
 		return (self.data[0:6] == "PING :")
 
-	"""
-	finds the userName of the person who sent the message or whatever
-	   does NOT work with CLEARCHAT
-	"""
+
 	def _findUserNamePRIVMSG(self):
+		"""
+		finds the userName of the person who sent the message or whatever
+		   does NOT work with CLEARCHAT
+		"""
 		try:
 			userName = re.sub('[^a-zA-Z0-9_]','', self.data.split('!')[0])
 			return userName
 		except:
 			return "error.finding.userName"
 
-	"""
-	determines if it's a mode thing that normally breaks the bot
-	"""
+
 	def _isMode(self):
+		"""
+		determines if it's a mode thing that normally breaks the bot
+		"""
 		return (self.data[1:6] == "jtv M")
 
-	"""
-	finds the mode or message type of the data
-	"""
+
 	def _getMode(self):
+		"""
+		finds the mode or message type of the data
+		"""
 		try:
 			self.mode = self.data.split('.tv ')[1]
 			self.mode = self.mode.split(' #')[0]
@@ -67,47 +72,52 @@ class inputmanager:
 		except:
 			return "unknown"
 
-	"""
-	useless method right now since NOTICE isn't used in this program
-	"""
+
 	def _cleanNOTICE(self):
+		"""
+		useless method right now since NOTICE isn't used in this program
+		"""
 		return ""
 
-	"""
-	cleans the PRIVMSG mode/type
-	"""
+
 	def _cleanPRIVMSG(self):
+		"""
+		cleans the PRIVMSG mode/type
+		"""
 		self.message = ""
 		self.messageRay = self.data[1:].split(':',1)[1:]
 		for i in self.messageRay:
 			self.message = self.message + i.strip('\r\n')
 		return self.message
 
-	"""
-	cleans the CLEARCHAT type
-	"""
+
 	def _cleanCLEARCHAT(self):
+		"""
+		cleans the CLEARCHAT type
+		"""
 		self.ban = ""
 		self.banRay = self.data[1:].split(' :')[1:]
 		for i in self.banRay:
 			self.ban = self.ban + i.strip('\r\n')
 		return self.ban
 
-	"""
-	clearchat has no userName so instead it returns the userName of 
-	   the person who was timed out
-	"""
+
 	def _findUserNameCLEARCHAT(self):
+		"""
+		clearchat has no userName so instead it returns the userName of 
+		   the person who was timed out
+		"""
 		try:
 			userName = re.sub('[^a-zA-Z0-9_]','', self.data.split(':')[2])
 			return userName
 		except:
 			return "error.finding.userName"
 
-	"""
-	returns the time ready for mysql logging
-	"""
+
 	def _getTime(self):
+		"""
+		returns the time ready for mysql logging
+		"""
 		self.dateTime= ""
 		self.date = datetime.datetime.now()
 		return str(self.date)[:19]

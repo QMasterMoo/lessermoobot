@@ -6,8 +6,11 @@ import random
 
 class dbconnector:
 
-	#Just makes the database connection
+	
 	def __init__(self):
+		"""
+		initializes the database
+		"""
 		try:
 			self.db = MySQLdb.connect(databaseAddress,
 			 							databaseUser, 
@@ -17,10 +20,11 @@ class dbconnector:
 			self._logError("CRITICAL ERROR: CONNECTING TO DATABASE")
 			sys.exit(0)
 
-	"""
-	It inserts everything into the log
-	"""
+
 	def insertMessageIntoLog(self, userName, date, msgType, data):
+		"""
+		It inserts everything into the log
+		"""
 		self.cursor = self.db.cursor()
 		self._insertUserIntoID(userName)
 		uid = self.getIDFromUsername(userName)
@@ -34,10 +38,11 @@ class dbconnector:
 			#self._logError("CRITICAL ERROR: INSERTING MESSAGE INTO LOG")
 		self.cursor.close()
 
-	"""
-	queries data for general log
-	"""
+
 	def queryLog(self, length):
+		"""
+		queries data for general log
+		"""
 		self.cursor = self.db.cursor()
 		try:
 			self.cursor.execute("SELECT COUNT( * ) FROM log")
@@ -53,11 +58,13 @@ class dbconnector:
 			self._logError("ERROR: querying in general")
 		self.cursor.close()
 
-	"""
-	Queries for a specific mode or type
-	It's untested, but should work
-	"""
+
+
 	def queryType(self, mode, length):
+		"""
+		Queries for a specific mode or type
+		It's untested, but should work
+		"""
 		self.cursor = self.db.cursor()
 		try: 
 			self.cursor.execute("SELECT COUNT( * ) FROM log WHERE type = \'%s\'" % (mode))
@@ -74,10 +81,11 @@ class dbconnector:
 		    self._logError("ERROR: quering type")
 		self.cursor.close()
 
-	"""
-	queries data for general log
-	"""
+
 	def queryHistory(self, userName, length):
+		"""
+		queries data for general log
+		"""
 		self.cursor = self.db.cursor()
 		uid = self.getIDFromUsername(userName)
 		try:
@@ -94,10 +102,11 @@ class dbconnector:
 			self._logError("ERROR: querying history")
 		self.cursor.close()
 
-	"""
-	retrieves username from id
-	"""
+
 	def getUsernameFromID(self, userID):
+		"""
+		retrieves username from id
+		"""
 		self.cursor = self.db.cursor()
 		try:
 			self.cursor.execute("SELECT * FROM users WHERE user_id=%s" % str(userID))
@@ -107,10 +116,12 @@ class dbconnector:
 			self._logError("ERROR: retrieving userName from id")
 		self.cursor.close()
 
-	"""
-	takes in the username and returns the user's id
-	"""
+
+
 	def getIDFromUsername(self, userName):
+		"""
+		takes in the username and returns the user's id
+		"""
 		self.cursor = self.db.cursor()
 		try:
 			self.cursor.execute("SELECT * FROM users WHERE username=\'%s\'" % userName)
@@ -120,10 +131,11 @@ class dbconnector:
 			self._logError("ERROR: retrieving id from userName")
 		self.cursor.close()
 
-	"""
-	executes external input
-	"""
+
 	def cursorExecute(self, command):
+		"""
+		executes external input
+		"""
 		self.cursor = self.db.cursor()
 		try:
 			self.cursor.execute(command)
@@ -132,10 +144,11 @@ class dbconnector:
 			self._logError("ERROR: executing custom command")
 		self.cursor.close()
 
-	"""
-	inserts quote data into quote table
-	"""
+
 	def insertQuote(self, userName, quote):
+		"""
+		inserts quote data into quote table
+		"""
 		self.cursor = self.db.cursor()
 		date = str(datetime.datetime.now())[:19]
 		uid = self.getIDFromUsername(userName)
@@ -153,10 +166,11 @@ class dbconnector:
 		self.cursor.close()
 
 
-	"""
-	queries quotes
-	"""
+
 	def queryQuote(self, qid):
+		"""
+		queries quotes
+		"""
 		self.cursor = self.db.cursor()
 		try:
 			if qid == 0:
@@ -180,10 +194,11 @@ class dbconnector:
 		self.cursor.close()
 		return "error retreiving quote"
 
-	"""
-	Deletes the quote based on id
-	"""
+
 	def deleteQuote(self, qid):
+		"""
+		Deletes the quote based on id
+		"""
 		self.cursor = self.db.cursor()
 		try:
 			self.cursor.execute("DELETE FROM quote WHERE id=%s" % qid)
@@ -193,10 +208,11 @@ class dbconnector:
 			self.cursor.rollback()
 		self.cursor.close()
 
-	"""
-	inserts the username into the 'users' table
-	"""
+
 	def _insertUserIntoID(self, userName):
+		"""
+		inserts the username into the 'users' table
+		"""
 		self.cursor = self.db.cursor()
 		try:
 			self.cursor.execute("INSERT INTO users VALUES ( NULL , \'%s\')" % userName)
@@ -205,10 +221,11 @@ class dbconnector:
 			self.db.rollback() #unable to ERROR LOG since it'll be an error most times
 		self.cursor.close()
 
-	"""
-	used for exiting the program and logging things
-	"""
+
 	def _logError(self, msg):
+		"""
+		used for exiting the program and logging things
+		"""
 		date = datetime.datetime.now()
 		try:
 			txt = open("errorlogs/" + str(date)[:19] + ".txt" ,"w")

@@ -14,11 +14,12 @@ class commandmanager:
         self.quoteTime = datetime.datetime.now() - datetime.timedelta(seconds=10)
         self.modList = ['moomasterq']#as long as this isn't empty the bot will work
 
-    """
-    Invokes the various hardcoded managers
-    Support for other commands will come in the future
-    """
+
     def manage(self, userName, data, db, serv):
+        """
+        Invokes the various hardcoded managers
+        Support for other commands will come in the future
+        """
         self.db = db
         self.data = data.split(' ')
         self.serv = serv
@@ -34,11 +35,12 @@ class commandmanager:
             self._logManager()
             self._nextGame()
 
-    """
-    Returns the mod list in a list
-    See issue #15
-    """
+
     def getModList(self):
+        """
+        Returns the mod list in a list
+        See issue #15
+        """
         if self.currentMinute != self.lastMinute: #Anti flood measure for tmi
             self.lastMinute = self.currentMinute
             self.modList = ['moomasterq']#resets mod list
@@ -50,10 +52,11 @@ class commandmanager:
                         self.modList.append(user)
         return self.modList
 
-    """
-    Manages the finding and executing of the !history userName command
-    """
+
     def _historyManager(self):
+        """
+        Manages the finding and executing of the !history userName command
+        """
         if self.data[0] == '!history':
             try:
                 self.logger.logToFileHistory(self.data[1] , 
@@ -64,10 +67,11 @@ class commandmanager:
                     self._historyUser(self.data[1], 200) ) #200 is default messages logged
                 self.serv.msg("%s/history/%s.txt" % (logSite, self.data[1]))
 
-    """
-    Manages the finding and executing of the !log command
-    """
+
     def _logManager(self):
+        """
+        Manages the finding and executing of the !log command
+        """
         if self.data[0] == '!log':
             try: #The database object allow retrieving the usernames from the list
                 self.logger.logToFile(self._log(int(self.data[1])), self.db)
@@ -76,10 +80,11 @@ class commandmanager:
                 self.logger.logToFile(self._log(1000), self.db) #1000 is default messages logged
                 self.serv.msg("%s/log.txt" % logSite)
 
-    """
-    does everything with quotes
-    """
+
     def _quoteManager(self, userName):
+        """
+        does everything with quotes
+        """
         #Makes sure the command wasn't used too recently
         if self.data[0] == '!quote':
             offCooldown = self.currentTime - datetime.timedelta(seconds=20) > self.quoteTime
@@ -116,11 +121,12 @@ class commandmanager:
 
 
 
-    """
-    This method takes in the serv object (connection to twitch server)
-    which is used to send message to the twitch server thanking people for subbing
-    """
+
     def _subManager(self, userName):
+        """
+        This method takes in the serv object (connection to twitch server)
+        which is used to send message to the twitch server thanking people for subbing
+        """
         if userName == "twitchnotify":
             subName = self.data[0]
             if self.data[1] == 'subscribed':
@@ -129,10 +135,11 @@ class commandmanager:
             else:
                 self.serv.msg(subMessage % subName)
 
-    """
-    !nextGame implementation
-    """
+
     def _nextGame(self):
+        """
+        !nextGame implementation
+        """
         if self.data[0].lower() == '!nextgame':
             gameList = self._readListOfString(self.logger.readCustomFile('nextgame'))
             try:
@@ -166,22 +173,25 @@ class commandmanager:
                         out += line + ', ' 
                 self.serv.msg(out[:-2])
 
-    """
-    Helper command for _nextGame() that reads the list of strings and splits them up into real input
-    """
+
     def _readListOfString(self, inList):
+        """
+        Helper command for _nextGame() that reads the list of strings and splits them up into real input
+        """
         if inList != None:
             return inList[2:-2].split('\', \'')
 
-    """
-    Queries database for last x messages for the user
-    """
+
     def _historyUser(self, userName, length):
+        """
+        Queries database for last x messages for the user
+        """
         return self.db.queryHistory(userName, length)
 
-    """
-    Queries database for last x messages
-    """
+
     def _log(self, length):
+        """
+        Queries database for last x messages
+        """
         return self.db.queryLog(length)
 

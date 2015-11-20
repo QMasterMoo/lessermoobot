@@ -5,10 +5,11 @@ class writer:
 	def __init__(self):
 		self.thing = ""
 
-	"""
-	Writes the !log to a file
-	"""
+
 	def logToFile(self, data, db):
+		"""
+		Writes the !log to a file
+		"""
 		try:
 			txt = open("logs/log.txt", 'w')
 			for line in data:
@@ -18,10 +19,11 @@ class writer:
 		except:
 			print "error logging history"
 
-	"""
-	Writes user's !history to file
-	"""
+
 	def logToFileHistory(self, userName, data):
+		"""
+		Writes user's !history to file
+		"""
 		try:
 			txt = open("logs/history/" + userName + ".txt", 'w')
 			for line in data:
@@ -31,11 +33,12 @@ class writer:
 		except:
 			print "error logging history"
 
-	"""
-	Writes (as a string) custom data to a custom file
-	Only writes to one single line
-	"""
+
 	def writeCustomFile(self, fileName, data):
+		"""
+		Writes (as a string) custom data to a custom file
+		Only writes to one single line
+		"""
 		try:
 			txt = open("customfiles/" + fileName, 'w+')
 			txt.write(str(data))
@@ -43,11 +46,12 @@ class writer:
 		except:
 			print "error creating custom file"
 
-	"""
-	Reads (as a string) a single line of data from a custom file
-	When used with writeCustomFile() file it'll work, otherwise be careful with multiple lines
-	"""
+
 	def readCustomFile(self, fileName):
+		"""
+		Reads (as a string) a single line of data from a custom file
+		When used with writeCustomFile() file it'll work, otherwise be careful with multiple lines
+		"""
 		try: 
 			txt = open("customfiles/" + fileName, 'r+')
 			out = txt.readline()

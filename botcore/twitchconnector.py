@@ -13,34 +13,31 @@ class twitchconnector:
 		self.irc.send("USER "+ twitchBotUsername + "\n")
 		self.irc.send("JOIN " + twitchChannel + "\n")
 
-	"""
-	R: n/a
-	M: n/a
-	E: replies with to twitch's pings so we don't get kicked out
-	"""
+
 	def ping(self):
+		"""
+		responds with ping
+		"""
 		self.irc.send("PONG :ping\n")
 
-	"""
-	R: message data to be sent
-	M: n/a
-	E: sends the message to twitch with the type PRIVMMSG
-	"""
+
 	def msg(self, message):
+		"""
+		sends a PRIVMSG, which just sends it to the chat
+		"""
 		self.irc.send("PRIVMSG " + twitchChannel + " :" + message + "\r\n")
 
-	"""
-	R: raw data to send via irc
-	M: n/a
-	E: sends message to the twitch irc interface, but as any type not just PRIVMSG
-	"""
+
 	def msgRaw(self, message):
+		"""
+		sends a msg as is to the server, generally not a good idea
+		unless you know exactly what you are doing
+		"""
 		self.irc.send(message)
 
-	"""
-	R: n/a
-	M: n/a
-	E: returns the message from the irc server
-	"""
+	
 	def getData(self):
+		"""
+		gets data from the server
+		"""
 		return self.irc.recv(2048)
