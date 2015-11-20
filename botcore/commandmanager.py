@@ -1,4 +1,4 @@
-import datetime #will be used for command cooldowns
+import datetime
 import json
 import urllib2
 from writer import writer
@@ -24,11 +24,13 @@ class commandmanager:
         self.data = data.split(' ')
         self.serv = serv
         #time things
-        self.currentMinute = datetime.datetime.now().minute
         self.currentTime = datetime.datetime.now()
+        self.currentMinute = self.currentTime.minute
+        self.utcTime = datetime.datetime.utcnow()
         #managers
         self._subManager(userName)
         self._quoteManager(userName)
+        self._highlightManager(userName)
         #mod managers
         if userName in self.getModList():
             self._historyManager()
@@ -119,6 +121,40 @@ class commandmanager:
                 quote = self.db.queryQuote(0)
                 self.serv.msg(quote)
 
+
+    def _highlightManager(self, userName):
+        if self.data[0].lower() == '!highlight':
+            try:
+                krakenJSON = urllib2.urlopen("https://api.twitch.tv/kraken/streams/%s" % twitchChannel[1:])
+                krakenJSON = json.loads(krakenJSON.read().decode('utf-8'))
+                createdAt = krakenJSON["stream"]["created_at"]
+                #2015-11-19T23:44:58Z --> 23:44:58
+                createdAt = createdAt[-9:-1].split(':')
+                #creates datetime obj for vod timestamp
+                vodtime = datetime.datetime(self.currentTime.year, self.currentTime.month, self.currentTime.day,
+                             int(createdAt[0]), int(createdAt[1]), int(createdAt[2]))
+                #converts from utc to localtimezone
+                timeZoneConversion = self.utcTime - self.currentTime
+                vodtime -= timeZoneConversion
+                #calculates uptime, subtracts some time since highlights happen late
+                timeDiff = self.currentTime - vodtime
+                timeDiff -= datetime.timedelta(seconds=75)
+                #creates the variables for timestamping the vod
+                uptimeHours, remainder = divmod(timeDiff.seconds, 3600)
+                uptimeMinutes, uptimeSeconds = divmod(remainder, 60)
+                #gets vod url
+                vodJSON = urllib2.urlopen("https://api.twitch.tv/kraken/channels/%s/videos?broadcasts=true" % twitchChannel[1:])
+                vodJSON = json.loads(vodJSON.read().decode('utf-8'))
+                latestVod = vodJSON["videos"][0]["_id"]
+                latestVod = latestVod[1:]#removes the v
+                vodLink = "http://twitch.tv/%s/v/%s?t=%ih%im%is" % (twitchChannel[1:], latestVod, uptimeHours, uptimeMinutes, uptimeSeconds)
+                #inserts into vodurl as channel_highlights
+                self.db.insertMessageIntoLog((twitchChannel[1:] + "_highlights"), str(self.currentTime)[:19], 
+                                            'HIGHLIGHT', vodLink)
+
+            except Exception as e:
+                print e
+            
 
 
 
