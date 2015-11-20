@@ -147,7 +147,8 @@ class commandmanager:
                 vodJSON = json.loads(vodJSON.read().decode('utf-8'))
                 latestVod = vodJSON["videos"][0]["_id"]
                 latestVod = latestVod[1:]#removes the v
-                vodLink = "http://twitch.tv/%s/v/%s?t=%ih%im%is" % (twitchChannel[1:], latestVod, uptimeHours, uptimeMinutes, uptimeSeconds)
+                vodLink = "%s requests: http://twitch.tv/%s/v/%s?t=%ih%im%is" % \
+                            (userName, twitchChannel[1:], latestVod, uptimeHours, uptimeMinutes, uptimeSeconds)
                 #inserts into vodurl as channel_highlights
                 self.db.insertMessageIntoLog((twitchChannel[1:] + "_highlights"), str(self.currentTime)[:19], 
                                             'HIGHLIGHT', vodLink)
