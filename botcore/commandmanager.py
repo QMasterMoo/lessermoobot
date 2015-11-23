@@ -89,33 +89,56 @@ class commandmanager:
         """
         #Makes sure the command wasn't used too recently
         if self.data[0] == '!quote':
+            #Checks if the time is 20 seconds greater than the last time the command was used
             offCooldown = self.currentTime - datetime.timedelta(seconds=20) > self.quoteTime
             if offCooldown:
+                #If the above is true, it resets the quote time
                 self.quoteTime = self.currentTime
         if self.data[0] == '!quote' and (offCooldown or userName in self.getModList()):
-            #abusing try/except again
+            """
+            Abusing a try/except in order to manage the quotes
+            So in case it's an invalid quote id when deleting nothing actually happens
+            """
             try:
+                #Manages the adding of quotes
                 if self.data[1].lower() == 'add' and userName in self.getModList():
                     out = ""
+                    #Rebuilds the output
                     for line in self.data[2:]:
                         out += line + ' '
+                    #If there was no quote give a sassy response
                     if out == "":
                         self.serv.msg("Actually write something!")
                     else:
                         #remove trailing whitespace
                         out = out[:-1]
+                        #Insert into quote table
                         qid = self.db.insertQuote(userName, str(out))
+                        #Output quote id
                         self.serv.msg("Quote Added! (#%s)" % str(qid))
+                #Manages the retrieving of quotes with the keyword 'get' 'getquote' or 'id'
                 elif self.data[1].lower() == 'get' or self.data[1].lower() == 'getquote' or self.data[1].lower() == 'id':
+                    #Casts the quote number as an integer and retrieves it
                     quote = self.db.queryQuote(int(self.data[2]))
                     self.serv.msg(quote)
+                #Manages deleting a quote
                 elif self.data[1] == 'delete' and userName in self.getModList():
+                    #This is the quote deletion key that makes sure 
                     if self.data[2] == 'yes_im_sure':
+                        #Casts the quote deletion id
                         qid = int(self.data[3])
+                        #Deletes it
                         self.db.deleteQuote(qid)
                         self.serv.msg("Quote #%s deleted :'(" % str(qid))
                     else:
+                        #Specifies that a user needs to say the deletion key to delete it
                         self.serv.msg("please specify if you are sure you want to delete it")
+                #Another way to retrieve a quote
+                else:
+                    #Creates the quote id
+                    qid = int(self.data[1])
+                    quote = self.db.queryQuote(qid)
+                    self.serv.msg(quote) 
             #If it's not an extra command it just goes and queries
             except:
                 quote = self.db.queryQuote(0)
