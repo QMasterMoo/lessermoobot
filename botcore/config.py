@@ -4,7 +4,7 @@ databaseUser = 'DATABASEUSERNAME'
 databaseUserPass = 'DATABASEUSERPASS'
 databaseName = 'DATABASENAME'
 #twitchconnector settings
-twitchServer = 'irc.twitch.tv'
+twitchServer = 'irc.chat.twitch.tv'
 twitchPort = 6667
 twitchChannel = '#CHANNELNAME' #Make sure to include the #
 twitchBotUsername = 'BOTNAME'
