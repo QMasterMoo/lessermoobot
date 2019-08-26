@@ -6,33 +6,33 @@ class inputmanager:
 
 	#I don't want it to be empty so I make this here
 	def __init__(self):
-		self.mode = ""
+		pass
 
 
-	def clean(self, data, cmd, db, serv):
+	def clean(self, messageData):
 		"""
 		Takes in the raw data and sends it off to the various sub methods to
 		   be cleaned from extra things and replies with the userName, time,
 		   mode or type that the message was sent through, and the chat.
 		"""
-		self.data = data
-		if not self.isPing() and not self._isMode():
-			self.mode = self._getMode()
-			#left in just in case I decide to track hosts/unhosts
-			if self.mode == 'NOTICE':
-				return None
-			elif self.mode == "PRIVMSG":
-				output = [self._findUserNamePRIVMSG(), self._getTime(), self.mode, self._cleanPRIVMSG()]
-				cmd.manage(output[0], output[3], db, serv) #Not sure how to make this done without intermediary variables
-				return output
-			elif self.mode == 'CLEARCHAT':
-				output = [self._findUserNameCLEARCHAT(), self._getTime(), self.mode, 
-						"CLEARCHAT FOR %s@%s" % (self._findUserNameCLEARCHAT(), self._getTime())]
-				return output
-			else:
-				return None
-		elif self.isPing():
-			serv.ping()
+		pass
+		# if not self.isPing() and not self._isMode():
+		# 	self.mode = self._getMode()
+		# 	#left in just in case I decide to track hosts/unhosts
+		# 	if self.mode == 'NOTICE':
+		# 		return None
+		# 	elif self.mode == "PRIVMSG":
+		# 		output = [self._findUserNamePRIVMSG(), self._getTime(), self.mode, self._cleanPRIVMSG()]
+		# 		cmd.manage(output[0], output[3], db, serv) #Not sure how to make this done without intermediary variables
+		# 		return output
+		# 	elif self.mode == 'CLEARCHAT':
+		# 		output = [self._findUserNameCLEARCHAT(), self._getTime(), self.mode, 
+		# 				"CLEARCHAT FOR %s@%s" % (self._findUserNameCLEARCHAT(), self._getTime())]
+		# 		return output
+		# 	else:
+		# 		return None
+		# elif self.isPing():
+		# 	serv.ping()
 
 
 	def isPing(self):

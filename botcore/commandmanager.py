@@ -177,7 +177,7 @@ class commandmanager:
                                             'HIGHLIGHT', vodLink)
 
             except Exception as e:
-                print e
+                print(e)
             
 
 
